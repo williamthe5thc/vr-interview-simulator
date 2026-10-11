@@ -1,0 +1,3 @@
+# Speech-to-text worker (tools/stt_worker.py). Runs in its own virtual environment (.venv_fw), on an NVIDIA GPU.
+faster-whisper
+numpy

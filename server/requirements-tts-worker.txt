@@ -1,0 +1,6 @@
+# Kokoro text-to-speech worker (tools/tts_worker.py). Runs in its own virtual environment (.venv_tts), on the GPU through onnxruntime-gpu.
+# The worker also needs the Kokoro model and voice files, which are downloaded separately.
+kokoro-onnx
+soundfile
+onnxruntime-gpu
+numpy

@@ -1,0 +1,46 @@
+# Core server list. It is older than the rest of the code and may be out of date; the two worker files next to it are the current ones for those workers.
+# VR Interview System Requirements
+# Python 3.9+ required
+
+# Core dependencies
+websockets==11.0.3
+python-dotenv==1.0.0
+requests==2.31.0
+aiofiles==23.2.1
+
+# Audio processing
+openai-whisper==20230314
+numpy==1.24.3
+scipy==1.11.4
+gtts==2.3.2
+pydub==0.25.1
+pyaudio==0.2.13
+
+# ML/AI frameworks (install based on your GPU)
+# For NVIDIA GPUs:
+# torch==2.1.0+cu118
+# torchaudio==2.1.0+cu118
+# torchvision==0.16.0+cu118
+
+# For CPU only:
+# torch==2.1.0
+# torchaudio==2.1.0
+# torchvision==0.16.0
+
+# Development tools
+pytest==7.4.3
+pytest-asyncio==0.21.1
+pytest-cov==4.1.0
+
+# Utilities
+colorama==0.4.6  # For colored terminal output
+tqdm==4.66.1     # Progress bars
+psutil==5.9.6    # System monitoring
+
+# Optional dependencies
+# httpx==0.25.2    # For advanced HTTP features
+# uvloop==0.19.0   # Faster event loop (Linux/macOS only)
+
+# Platform-specific
+# Windows: pywin32==306
+# Linux: python-xlib==0.33

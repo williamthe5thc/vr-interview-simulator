@@ -1,0 +1,51 @@
+{
+  "server": {
+    "host": "0.0.0.0",
+    "port": 8765,
+    "log_level": "INFO"
+  },
+  "audio": {
+    "stt_model": "small",
+    "device": "cuda",
+    "tts_model": "en",
+    "sample_rate": 16000,
+    "channels": 1,
+    "stt_remote_url": "http://127.0.0.1:8770"
+  },
+  "storage": {
+    "audio_dir": "data/audio",
+    "conversation_dir": "data/conversations",
+    "retention_days": 30
+  },
+  "ollama": {
+    "url": "http://127.0.0.1:11434",
+    "model": "qwen2.5:7b-instruct",
+    "context_length": 8192,
+    "scenario_type": "interview",
+    "options": {
+      "temperature": 0.8,
+      "top_p": 0.9,
+      "top_k": 40,
+      "repeat_penalty": 1.1,
+      "num_predict": 160,
+      "seed": null,
+      "timeout": 60
+    },
+    "stream_reply": true
+  },
+  "heartbeat": {
+    "enabled": true,
+    "interval": 5.0
+  },
+  "alltalk": {
+    "url": "http://127.0.0.1:7851",
+    "voice": "female_06.wav",
+    "format": "wav",
+    "retries": 3,
+    "timeout": 60,
+    "direct_api_timeout": 60,
+    "alltalk_dir": "PATH_TO_ALLTALK/alltalk_tts",
+    "default_language": "en"
+  },
+  "engine": "kokoro"
+}

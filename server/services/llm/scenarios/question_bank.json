@@ -1,0 +1,321 @@
+{
+ "software_engineer": {
+  "questions": [
+   "Tell me about yourself and what drew you into software engineering.",
+   "Why are you interested in this role and our company?",
+   "Walk me through a project you are proud of and what your part in it was.",
+   "Tell me about a time you tracked down a particularly difficult bug and how you found the cause.",
+   "Describe a time you disagreed with a teammate about a technical decision and how it was resolved.",
+   "How do you approach writing code that is easy to test and maintain?",
+   "What do you look for when you review a colleague's pull request?",
+   "Tell me about a time you had to learn a new language or framework quickly to deliver something.",
+   "Describe a time you missed or nearly missed a deadline and what you did about it.",
+   "How would you explain a hash table and how it handles collisions to a new teammate?",
+   "Tell me about a time you received critical feedback on your code and what you did with it.",
+   "Suppose a production release is failing and the team is stressed; what do you do in the first hour?"
+  ],
+  "good_answer_tips": [
+   "Walk through your reasoning out loud, including trade-offs, rather than jumping to an answer.",
+   "Use a concrete project with your specific contribution and a measurable outcome.",
+   "Show ownership of mistakes and what you changed afterward.",
+   "Mention testing, code review, and communication with non-engineers."
+  ],
+  "red_flags": [
+   "Blaming teammates or past employers for problems.",
+   "Vague answers with no specific project or result.",
+   "Claiming never to have made a mistake or received hard feedback."
+  ],
+  "sources": [
+   {
+    "title": "30 common software engineer interview questions for 2026",
+    "url": "https://www.wiz.io/academy/cloud-careers/software-engineer-interview-questions"
+   },
+   {
+    "title": "The 30 most common Software Engineer behavioral interview questions",
+    "url": "https://www.techinterviewhandbook.org/behavioral-interview-questions/"
+   },
+   {
+    "title": "10 Software Engineer Interview Questions + Example Answers",
+    "url": "https://www.coursera.org/articles/software-engineer-interview-questions"
+   },
+   {
+    "title": "19 Behavioral Interview Questions for Software Engineers",
+    "url": "https://www.testgorilla.com/blog/behavioral-interview-questions-software-engineers/"
+   }
+  ]
+ },
+ "customer_service": {
+  "questions": [
+   "Tell me a little about yourself and why you want to work in customer service.",
+   "How would you define great customer service?",
+   "Tell me about a time you turned an angry customer into a satisfied one.",
+   "What do you do first when a customer is yelling at you over the phone?",
+   "Do you believe the customer is always right, and why or why not?",
+   "How do you handle a customer asking for something that is against company policy?",
+   "What would you do if you did not know the answer to a customer's question?",
+   "Tell me about a time you went above and beyond for a customer.",
+   "How do you stay calm and organized when the queue is long and several customers are waiting?",
+   "Which customer support or CRM tools have you used, and how do you pick up new software?",
+   "Tell me about a time you made a mistake with a customer and how you fixed it.",
+   "How would you contact a customer about a problem when you do not yet have all the answers?"
+  ],
+  "good_answer_tips": [
+   "Name steps: listen, empathize, apologize where fair, solve, follow up.",
+   "Give a real example with the customer outcome.",
+   "Show respect for policy while looking for the best allowed option.",
+   "Show patience and a calm tone under pressure."
+  ],
+  "red_flags": [
+   "Arguing with or blaming the customer.",
+   "Saying you would simply pass the customer along without follow-through.",
+   "Having no example of a difficult interaction."
+  ],
+  "sources": [
+   {
+    "title": "Customer Service Interview Questions and Answers (Indeed)",
+    "url": "https://www.indeed.com/career-advice/interviewing/customer-service-interview-questions-and-answers"
+   },
+   {
+    "title": "Top 22 customer service interview questions and answers (Zendesk)",
+    "url": "https://www.zendesk.com/in/blog/interview-prep-10-questions-for-hiring-great-support-reps/"
+   },
+   {
+    "title": "13 Frequently Asked Customer Service Interview Questions (Hiver)",
+    "url": "https://hiverhq.com/blog/customer-service-interview-questions"
+   },
+   {
+    "title": "Customer service interview questions and answers (Gladly)",
+    "url": "https://www.gladly.ai/blog/customer-service-interview-questions/"
+   }
+  ]
+ },
+ "retail_associate": {
+  "questions": [
+   "Tell me about yourself and why you want to work in retail.",
+   "Why do you want to work at our store specifically?",
+   "Tell me about your previous retail or customer-facing experience.",
+   "How would you greet and help a customer who walks in and seems unsure what they want?",
+   "How do you recommend extra products without sounding pushy?",
+   "Describe a time you dealt with an upset customer, such as at a return counter.",
+   "What would you do if several customers needed help at the same moment?",
+   "What would you do if a customer asked about a product you knew nothing about?",
+   "What experience do you have with cash registers and handling money accurately?",
+   "How would you react if you saw a coworker or customer stealing?",
+   "Tell me about a time you worked with a team to hit a goal, like a sale or inventory push.",
+   "How do you stay on your feet and positive during a long, busy shift?"
+  ],
+  "good_answer_tips": [
+   "Show warmth and initiative, like greeting and approaching customers.",
+   "Mention accuracy with cash, returns, and store policy.",
+   "Give examples of teamwork and flexibility with schedules.",
+   "Explain helping customers find value rather than pushing sales."
+  ],
+  "red_flags": [
+   "Ignoring the customer or being dismissive about the work.",
+   "Handling theft confrontationally instead of following policy and alerting a manager.",
+   "Complaining about past managers or customers."
+  ],
+  "sources": [
+   {
+    "title": "Top 15 Retail Associate Interview Questions & Answers (ZipRecruiter)",
+    "url": "https://www.ziprecruiter.com/career/job-interview-question-answers/retail-associate"
+   },
+   {
+    "title": "30 Retail Associate Interview Questions (Insight Global)",
+    "url": "https://insightglobal.com/blog/30-retail-associate-interview-questions/"
+   },
+   {
+    "title": "Retail Interview Questions: 38 Best Questions (Homebase)",
+    "url": "https://www.joinhomebase.com/blog/retail-interview-questions"
+   },
+   {
+    "title": "Retail Interview Questions and Answers (The Interview Guys)",
+    "url": "https://blog.theinterviewguys.com/retail-interview-questions/"
+   }
+  ]
+ },
+ "restaurant_server": {
+  "questions": [
+   "Tell me about your experience as a server and what you enjoy about it.",
+   "Why do you want to work at our restaurant?",
+   "How do you keep track of several tables during a busy rush?",
+   "Tell me about a time a guest was unhappy with their food or service and how you handled it.",
+   "How do you handle a guest who tells you they have a food allergy?",
+   "What would you do if you noticed a coworker was falling behind while you were also busy?",
+   "How would you describe and recommend menu items to a guest who cannot decide?",
+   "What experience do you have with point-of-sale systems?",
+   "Tell me about a time you made an order mistake and what you did.",
+   "How do you stay upbeat and efficient on a long, hectic shift?",
+   "What would you do if the kitchen ran out of a popular dish after a guest ordered it?",
+   "Tell me about a time you worked well with kitchen staff or teammates to fix a problem."
+  ],
+  "good_answer_tips": [
+   "Show how you prioritize tables and communicate with kitchen and team.",
+   "Treat allergies seriously: confirm with the kitchen and manager.",
+   "Describe repairing a bad experience with a calm, quick fix.",
+   "Mention teamwork, reliability, and being on time."
+  ],
+  "red_flags": [
+   "Guessing about allergens or minimizing allergy safety.",
+   "Blaming kitchen or guests for problems.",
+   "Unwillingness to help teammates or work weekends and busy shifts."
+  ],
+  "sources": [
+   {
+    "title": "5 Restaurant Server Interview Questions (Indeed)",
+    "url": "https://www.indeed.com/hire/interview-questions/restaurant-server"
+   },
+   {
+    "title": "Top 15 Restaurant Server Job Interview Questions & Answers (ZipRecruiter)",
+    "url": "https://www.ziprecruiter.com/career/job-interview-question-answers/restaurant-server"
+   },
+   {
+    "title": "32 Restaurant Server Interview Questions (Cuboh)",
+    "url": "https://www.cuboh.com/blog/server-interview-questions"
+   },
+   {
+    "title": "7 real-life restaurant server interview questions (Workable)",
+    "url": "https://resources.workable.com/restaurant-server-interview-questions"
+   }
+  ]
+ },
+ "nurse": {
+  "questions": [
+   "Tell me about yourself and why you chose nursing.",
+   "Why do you want to work on this unit at our hospital?",
+   "Describe a time a patient's condition began to deteriorate and what you did.",
+   "A patient on your unit suddenly becomes unresponsive; what are your first steps?",
+   "How do you prioritize care when you have several patients who all need you at once?",
+   "Tell me about a time you disagreed with a physician or colleague about patient care.",
+   "How do you support a laboring patient and her family when labor is long or not going as planned?",
+   "How would you respond if a patient in labor or postpartum showed signs of heavy bleeding?",
+   "How would you handle a patient who refuses a recommended treatment?",
+   "Tell me about a time you made or nearly made a medication error and what happened afterward.",
+   "Describe a time you dealt with a difficult or upset patient or family member.",
+   "How do you take care of yourself and manage stress after emotionally hard shifts?"
+  ],
+  "good_answer_tips": [
+   "Use clear clinical steps such as assess, escalate, and communicate with SBAR.",
+   "Put patient safety and advocacy first in every example.",
+   "Give specific outcomes and what you learned.",
+   "Show teamwork and respectful communication with providers."
+  ],
+  "red_flags": [
+   "Hiding or downplaying errors instead of reporting them.",
+   "Acting alone without escalating in an emergency.",
+   "Dismissing patient or family concerns."
+  ],
+  "sources": [
+   {
+    "title": "Labor and Delivery Nurse Interview Questions (AvaHR)",
+    "url": "https://avahr.com/labor-and-delivery-nurse-interview-questions/"
+   },
+   {
+    "title": "Labor and Delivery Nurse Interview Questions (Better Team)",
+    "url": "https://www.betterteam.com/labor-and-delivery-nurse-interview-questions"
+   },
+   {
+    "title": "20 Strategic Labor and Delivery Nurse Interview Questions (Insight Global)",
+    "url": "https://insightglobal.com/blog/labor-and-delivery-nurse-interview-questions/"
+   },
+   {
+    "title": "Med Surg Nurse Interview Questions (TalentLyft)",
+    "url": "https://www.talentlyft.com/template/med-surg-nurse-interview-questions"
+   },
+   {
+    "title": "How to Answer Scenario-Based Nursing Interview Questions (Berxi)",
+    "url": "https://www.berxi.com/resources/guides/nursing-interview-questions/scenarios/"
+   }
+  ]
+ },
+ "speech_therapist": {
+  "questions": [
+   "What inspired you to become a speech-language pathologist?",
+   "Why are you interested in working in this school or clinic setting?",
+   "How do you decide whether a child is eligible for speech and language services?",
+   "How do you plan therapy sessions that keep young children engaged?",
+   "Tell me about a child who was not making progress and what you changed.",
+   "How do you collect data and monitor progress toward goals?",
+   "How do you write and run an IEP meeting so that parents feel included?",
+   "How do you work with classroom teachers to carry therapy goals into the classroom?",
+   "How do you manage a large caseload and paperwork deadlines?",
+   "Tell me about a time you disagreed with a parent or colleague about a child's services.",
+   "How would you support a family who is frustrated or in denial about their child's diagnosis?",
+   "How do you work with students from culturally and linguistically diverse backgrounds?"
+  ],
+  "good_answer_tips": [
+   "Cite evidence-based methods and data-driven decisions.",
+   "Describe family and teacher collaboration with concrete examples.",
+   "Show cultural sensitivity and ethical practice.",
+   "Explain how you adjust therapy when progress stalls."
+  ],
+  "red_flags": [
+   "No mention of data or progress monitoring.",
+   "Dismissive attitude toward parents or teachers.",
+   "A one-size-fits-all approach to therapy."
+  ],
+  "sources": [
+   {
+    "title": "SLP Interview Questions for School-Based Roles (ProCare Therapy)",
+    "url": "https://www.procaretherapy.com/resources/school-professional/slp-interview-questions/"
+   },
+   {
+    "title": "6 SLP Interview Questions (USAHS)",
+    "url": "https://www.usa.edu/blog/6-slp-interview-questions/"
+   },
+   {
+    "title": "Prepare for a School-Based SLP Job Interview (GHR Education)",
+    "url": "https://www.ghreducation.com/blog/prepare-for-school-based-slp-interview"
+   },
+   {
+    "title": "Speech-Language Pathology Job Interview Guide (Teach.com)",
+    "url": "https://teach.com/online-ed/healthcare-degrees/online-masters-speech-language-pathology/speech-pathologist-professional-development/job-interview-guide/"
+   }
+  ]
+ },
+ "teacher": {
+  "questions": [
+   "Tell me about yourself and what made you decide to become a teacher.",
+   "How would you describe your teaching philosophy?",
+   "How do you set up and manage your classroom at the start of the year?",
+   "Tell me about a time a student was disruptive and how you handled it.",
+   "How do you differentiate instruction for students at different levels?",
+   "How do you support students with IEPs or 504 plans?",
+   "How do you motivate a student who seems disengaged?",
+   "How do you communicate with parents, especially when there is a concern?",
+   "Describe a lesson that went badly and what you changed afterward.",
+   "How do you use technology and assessment data to improve your teaching?",
+   "Tell me about a time you collaborated with colleagues to help a student succeed.",
+   "How would you respond if a parent strongly disagreed with a grade you gave?"
+  ],
+  "good_answer_tips": [
+   "Give concrete classroom examples with student outcomes.",
+   "Show proactive classroom management built on relationships and clear routines.",
+   "Explain how you use assessment data to adjust instruction.",
+   "Show respectful, regular communication with families."
+  ],
+  "red_flags": [
+   "Blaming students or parents for problems.",
+   "Relying only on punishment for classroom management.",
+   "Having no plan for students who need extra support."
+  ],
+  "sources": [
+   {
+    "title": "Top Interview Questions for K12 Educators (InterviewStream)",
+    "url": "https://interviewstream.com/resources/blog/top-interview-questions-for-educators/"
+   },
+   {
+    "title": "50 Great Teacher Interview Questions (Education World)",
+    "url": "https://www.educationworld.com/a_admin/admin/admin396.shtml"
+   },
+   {
+    "title": "Job Interview Questions for Elementary School Teachers (Indeed)",
+    "url": "https://www.indeed.com/career-advice/interviewing/interview-questions-for-elementary-teacher"
+   },
+   {
+    "title": "Elementary Teacher Interview Questions (Spark Hire)",
+    "url": "https://www.sparkhire.com/interview-questions/k-12/elementary-teacher/"
+   }
+  ]
+ }
+}
