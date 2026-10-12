@@ -6,6 +6,8 @@ This is a VR job-interview practice simulator. The user sits in a virtual confer
 
 The idea is simple: practice speaking an interview answer out loud, in a realistic setting, before the real one.
 
+**Try it in a browser:** a scripted web demo (no AI, no server) is at https://williamthe5thc.github.io/vr-interview-demo/. Best on desktop Chrome or Edge.
+
 ## Status
 
 In progress (2026).
@@ -128,7 +130,7 @@ Interview audio is not stored. Transcripts and exports stay on the local machine
 
 ## Media
 
-Headset demo video: coming soon. Images marked "editor capture" come from the Unity editor, not the headset.
+Scripted web demo: https://williamthe5thc.github.io/vr-interview-demo/. Headset demo video: coming soon. Images marked "editor capture" come from the Unity editor, not the headset.
 
 | | |
 |---|---|
