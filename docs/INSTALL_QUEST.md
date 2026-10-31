@@ -49,7 +49,9 @@ You need a Windows PC with an NVIDIA GPU (about 8 GB of video memory or more for
 3. Let the headset reach it:
    - **Same Wi-Fi:** use the PC's LAN address, for example `ws://192.168.0.20:8765`. You may need to allow Python through Windows Firewall on private networks.
    - **From anywhere:** use a VPN such as Tailscale, or a tunnel that gives you a `wss://` address.
-4. Access codes: your server can switch them off (`"access": {"require_access_code": false}` in `server/config/config.json`), or you can make codes with `server/tools/access_codes.py`.
+4. Access codes: keep `"access": {"require_access_code": true}` in `server/config/config.json` and make your own codes, one for yourself too:
+   `.venv\Scripts\python.exe tools\access_codes.py add "Your name"` (in `server/`). See [`server/docs/ACCESS_CODES.md`](../server/docs/ACCESS_CODES.md).
+   Only on a private network (LAN or Tailscale) is it reasonable to switch codes off with `"require_access_code": false`.
 5. Install the APK (as above, or build it yourself, see `CLAUDE.md`). On the sign-in screen, press **Advanced** and type your server's address in the **Server address** field.
    Then type your code (any text if codes are off) and press **Connect**. Use **Default** to go back to the project owner's server.
 

@@ -1,0 +1,88 @@
+<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Blind reply rating</title>
+<style>
+body{font-family:Segoe UI,Arial,sans-serif;margin:0 auto;max-width:900px;padding:16px 16px 90px;background:#fafafa;color:#222}
+h1{font-size:22px}h2{margin-top:36px;border-bottom:2px solid #ddd;padding-bottom:4px}
+.card{background:#fff;border:1px solid #ddd;border-radius:8px;padding:12px;margin:14px 0}
+.hdr{position:sticky;top:0;z-index:5;background:#fff;max-height:35vh;overflow:auto;margin:-12px -12px 8px;padding:8px 12px;border-bottom:1px solid #ccc;border-radius:8px 8px 0 0}
+.ctx,.ans{margin:4px 0;font-size:14px}.ctx{color:#555}small{color:#777}
+.reply{border-left:4px solid #8ab;margin:10px 0;padding:4px 10px;background:#f6f9fc}.reply p{margin:4px 0}
+.stars button{width:34px;height:30px;margin-right:4px;border:1px solid #999;background:#fff;border-radius:4px;cursor:pointer}
+.stars button.on{background:#2a7;color:#fff;border-color:#2a7}.best{font-size:14px;margin-top:6px}
+#bar{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #ccc;padding:10px 16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+button.act{padding:8px 14px;border:0;border-radius:6px;background:#246;color:#fff;cursor:pointer}pre{background:#fff;border:1px solid #ddd;padding:10px;overflow:auto}
+#gate{position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;z-index:10}
+#gate div{background:#fff;color:#222;padding:24px;border-radius:10px;max-width:420px;width:90%}#gate input{width:100%;padding:8px;font-size:16px;margin:10px 0;box-sizing:border-box}
+#who{font-weight:600}a.lnk{color:#246;cursor:pointer;text-decoration:underline;font-size:13px}
+@media (prefers-color-scheme:dark){body{background:#181a1b;color:#ddd}.card,#bar,pre,.hdr{background:#222;border-color:#444}.reply{background:#1d2630}.stars button{background:#222;color:#ddd}a.lnk{color:#8bd}}
+</style>
+<div id="gate"><div><b>Who is rating?</b><p>Type your first name. Your ratings are kept separate from everybody else's and can be changed any time.</p>
+<input id="name" maxlength="40" placeholder="Your name" autofocus>
+<div id="passrow" style="display:none"><p>Passcode (given to you by whoever sent you this link)</p><input id="pass" maxlength="40" placeholder="Passcode"></div>
+<div id="msg" style="color:#b00;display:none"></div><button class="act" id="go">Start rating</button></div></div>
+<h1>Which reply sounds like a good human interviewer?</h1>
+<p>For each moment, read the candidate's answer and rate every reply from 1 (poor, stiff, wrong or off-topic) to 5 (natural, relevant, what a good interviewer would say). Then tick the best one. The models are hidden and shuffled. Your ratings are saved in this browser as you go. You can skip a moment.</p>
+__BODY__
+<div id="bar"><span id="who"></span><span id="count"></span><button class="act" id="dl">Download my ratings</button><a class="lnk" id="chg">change rater</a>
+<label>Reveal (only with the key file): <input type="file" id="keyfile" accept=".json"></label></div><pre id="out" hidden></pre>
+<script>
+let R = {}, NAME = '', tmr;
+try { NAME = localStorage.getItem('rater-name') || ''; } catch (e) {}
+const store = () => 'blind-ratings-v2:' + NAME;
+let PASS = '', NEEDPASS = false;
+try { PASS = sessionStorage.getItem('pass') || ''; } catch (e) {}
+const q = () => '?rater=' + encodeURIComponent(NAME) + (PASS ? '&pass=' + encodeURIComponent(PASS) : '');
+function badPass() { PASS = ''; try { sessionStorage.removeItem('pass'); } catch (e) {} const m = document.getElementById('msg'); m.textContent = 'That passcode was not accepted.'; m.style.display = 'block'; document.getElementById('passrow').style.display = 'block'; document.getElementById('gate').style.display = 'flex'; }
+function load() {
+  R = {};
+  try { R = JSON.parse(localStorage.getItem(store()) || '{}'); } catch (e) {}
+  if (NAME.toLowerCase() === 'owner') {          // ratings made before raters existed belong to the owner
+    try { const o = JSON.parse(localStorage.getItem('blind-ratings-v1') || '{}'); for (const k in o) if (!(k in R)) R[k] = o[k]; } catch (e) {}
+  }
+}
+function count() { document.getElementById('count').textContent = Object.keys(R).filter(k => !k.startsWith('best:')).length + ' ratings'; }
+function send() { try { fetch('/ratings' + q(), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(R) }).then(r => { if (r.status === 403) badPass(); }).catch(() => {}); } catch (e) {} }
+function save() { try { localStorage.setItem(store(), JSON.stringify(R)); } catch (e) {} count(); clearTimeout(tmr); tmr = setTimeout(send, 800); }
+function paint() {
+  document.querySelectorAll('.stars').forEach(s => { const id = s.dataset.id; s.querySelectorAll('button').forEach(b => b.classList.toggle('on', R[id] == b.dataset.v)); });
+  document.querySelectorAll('input[type=radio]').forEach(r => { r.checked = (R['best:' + r.name] == r.value); });
+}
+document.querySelectorAll('.stars').forEach(s => { const id = s.dataset.id; s.querySelectorAll('button').forEach(b => { b.onclick = () => { R[id] = +b.dataset.v; paint(); save(); }; }); });
+document.querySelectorAll('input[type=radio]').forEach(r => { r.onchange = () => { R['best:' + r.name] = r.value; save(); }; });
+function start() {
+  document.getElementById('gate').style.display = 'none';
+  document.getElementById('who').textContent = 'Rater: ' + NAME;
+  load(); paint(); count(); save();
+  fetch('/ratings' + q()).then(r => { if (r.status === 403) { badPass(); return {}; } return r.ok ? r.json() : {}; }).then(S => { let n = 0; for (const k in S) if (!(k in R)) { R[k] = S[k]; n++; } if (n) { paint(); save(); } }).catch(() => {});
+}
+function setName(n) {
+  n = (n || '').trim().replace(/[^A-Za-z0-9 _-]/g, '').slice(0, 40);
+  if (!n) return false;
+  if (NEEDPASS) { const pv = document.getElementById('pass').value.trim() || PASS; if (!pv) { document.getElementById('passrow').style.display = 'block'; return false; } PASS = pv; try { sessionStorage.setItem('pass', PASS); } catch (e) {} document.getElementById('msg').style.display = 'none'; }
+  NAME = n; try { localStorage.setItem('rater-name', NAME); } catch (e) {}
+  start(); return true;
+}
+document.getElementById('go').onclick = () => setName(document.getElementById('name').value);
+document.getElementById('name').onkeydown = e => { if (e.key === 'Enter') setName(e.target.value); };
+document.getElementById('chg').onclick = () => { document.getElementById('gate').style.display = 'flex'; document.getElementById('name').value = ''; };
+document.getElementById('dl').onclick = () => {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([JSON.stringify({ rater: NAME, ratings: R }, null, 1)], { type: 'application/json' }));
+  a.download = 'ratings_' + (NAME || 'rater') + '.json'; a.click();
+};
+document.getElementById('keyfile').onchange = async e => {
+  const K = JSON.parse(await e.target.files[0].text()); const sum = {}, cnt = {}, wins = {};
+  for (const id in R) {
+    if (id.startsWith('best:')) { const k = id.slice(10); const m = (K.key[k] || {})[R[id]]; if (m) wins[m] = (wins[m] || 0) + 1; continue; }
+    const p = id.split('|'); const lab = p.pop(); const k = p.join('|'); const m = (K.key[k] || K.key[p[0]] || {})[lab];
+    if (!m) continue; sum[m] = (sum[m] || 0) + R[id]; cnt[m] = (cnt[m] || 0) + 1;
+  }
+  let t = 'model (' + NAME + ')'.padEnd(10) + '                 avg rating   rated   best-picks\n';
+  for (const m of Object.keys(K.timing)) t += m.padEnd(36) + ((sum[m] || 0) / (cnt[m] || 1)).toFixed(2).padEnd(13) + String(cnt[m] || 0).padEnd(8) + String(wins[m] || 0) + '\n';
+  const o = document.getElementById('out'); o.textContent = t; o.hidden = false; o.scrollIntoView();
+};
+fetch('/config').then(r => r.ok ? r.json() : {}).then(c => {
+  NEEDPASS = !!c.passcode_required;
+  if (NEEDPASS) document.getElementById('passrow').style.display = PASS ? 'none' : 'block';
+  if (NAME && (!NEEDPASS || PASS)) { document.getElementById('gate').style.display = 'none'; start(); }
+}).catch(() => { if (NAME) { document.getElementById('gate').style.display = 'none'; start(); } });
+</script>

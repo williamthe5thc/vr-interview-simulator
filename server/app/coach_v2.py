@@ -5,7 +5,7 @@ One call reads the WHOLE interview and gives every score, an exact quote, what w
 patterns across the interview (top fixes, attitude, summary). Short parallel calls then rewrite the weaker answers in the candidate's own
 voice. Same report shape as the original coach (extra keys: quote, tone, attitude, coach, left_early), so the headset keeps working.
 
-config/coach_mode.txt (written by scripts/switch_coach.ps1): legacy | v2 (Claude Haiku 5.5) | v2-sonnet (Claude Sonnet 5.5).
+config/coach_mode.txt (written by Tools/switch_coach.ps1): legacy | v2 (Claude Haiku 5.5) | v2-sonnet (Claude Sonnet 5.5).
 """
 import json
 import logging

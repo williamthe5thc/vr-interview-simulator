@@ -6,6 +6,7 @@ Every message is a JSON text frame with a `type` field. Audio travels inside JSO
 - Headset address: whatever the player sets on the sign-in screen. The app's default is in
   `unity/Assets/AccessGate.cs` (`DefaultServer`); a self-hosted server is usually `ws://<pc-address>:8765`.
 - Server code: `server/app/websocket/server_enhanced_fixed.py` (routing) and `server/app/access_codes.py` (sign-in).
+  How codes are made, limited and switched off: [`server/docs/ACCESS_CODES.md`](../server/docs/ACCESS_CODES.md).
 - Client code: `unity/Assets/WebSocketManager.cs`.
 
 ## 1. Sign-in (access codes)
@@ -53,8 +54,19 @@ Client rules:
 - NativeWebSocket reports the 44xx close codes as "Undefined", so the client goes by the `auth_result` message rather than the close code.
 - `auth_result` arrives before `session_init`.
 
-If the day's interviews run out during a connection, `begin` is answered with `{"type": "error", "code": 429, "message": "..."}`.
-The headset shows "No interviews left today".
+Server side:
+
+- Codes are stored only as salted hashes. The server ignores case, spaces and dashes in what the player types.
+- The server must get `auth` within `access.auth_timeout_seconds` (default 10), or it closes the socket.
+- A repeated `auth` on a connection that already signed in is answered `ok` with `limits: null`.
+- The server pins a code session to its own `session_id` and ignores any id the client sends.
+- With `require_access_code: false` (a private server), every `auth` is answered `ok`.
+- Wrong codes: 5 in 10 minutes from one address locks that address out for 15 minutes; 50 from all addresses together pauses every attempt. Both give `rate_limited`.
+- Kill switch: while `config/quest_disabled` exists, every code session is refused with `busy` (4503), and running sessions get no more turns.
+- Only one headset session at a time over all codes (`access.max_quest_sessions`). A second headset gets `busy`.
+
+If the day's interviews or the spend cap run out during a connection, `begin` (or a turn) is answered with
+`{"type": "error", "code": 429, "message": "..."}`. The headset shows "No interviews left today".
 
 ## 2. Session messages
 

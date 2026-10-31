@@ -1,0 +1,43 @@
+{
+  "server": {
+    "host": "0.0.0.0",
+    "port": 8765,
+    "log_level": "WARNING"
+  },
+  "audio": {
+    "stt_model": "medium",
+    "tts_model": "en",
+    "sample_rate": 16000,
+    "channels": 1
+  },
+  "storage": {
+    "audio_dir": "data/audio",
+    "conversation_dir": "data/conversations",
+    "retention_days": 7
+  },
+  "alltalk": {
+    "url": "http://127.0.0.1:7851",
+    "voice": "Clint_Eastwood CC3 (enhanced).wav",
+    "direct_mode": true,
+    "retries": 5,
+    "timeout": 30
+  },
+  "ollama": {
+    "url": "http://localhost:11434",
+    "model": "phi",
+    "context_length": 8192,
+    "system_prompt": "You are a job interviewer conducting an interview with the candidate. Your questions should be relevant to a software engineering position. Keep your responses concise and professional. Ask follow-up questions based on the candidate's answers. Avoid mentioning that you are an AI or breaking character.",
+    "options": {
+      "temperature": 0.65,
+      "top_p": 0.9,
+      "top_k": 40,
+      "repeat_penalty": 1.2,
+      "num_predict": 150,
+      "seed": 42
+    }
+  },
+  "heartbeat": {
+    "enabled": true,
+    "interval": 5.0
+  }
+}

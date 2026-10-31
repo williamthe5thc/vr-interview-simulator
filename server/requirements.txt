@@ -1,4 +1,3 @@
-# Core server list. It is older than the rest of the code and may be out of date; the two worker files next to it are the current ones for those workers.
 # VR Interview System Requirements
 # Python 3.9+ required
 

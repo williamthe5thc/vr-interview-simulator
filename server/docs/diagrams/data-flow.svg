@@ -1,0 +1,152 @@
+<svg viewBox="0 0 1400 900" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="1400" height="900" fill="#f5f7fa"/>
+  
+  <!-- Title -->
+  <text x="700" y="40" font-family="Arial, sans-serif" font-size="28" font-weight="bold" text-anchor="middle" fill="#2c3e50">VR Interview System - Data Flow Diagram</text>
+  
+  <!-- User -->
+  <g id="user">
+    <circle cx="100" cy="450" r="40" fill="#3498db" stroke="#2980b9" stroke-width="2"/>
+    <text x="100" y="455" font-family="Arial, sans-serif" font-size="16" text-anchor="middle" fill="white">User</text>
+    <text x="100" y="510" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#34495e">VR Headset</text>
+  </g>
+  
+  <!-- Flow Steps -->
+  <!-- Step 1: User Speech -->
+  <g id="step1">
+    <rect x="200" y="100" width="200" height="80" rx="10" fill="#e74c3c" stroke="#c0392b" stroke-width="2"/>
+    <text x="300" y="130" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="white">1. Speech Input</text>
+    <text x="300" y="155" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white">User speaks</text>
+    <text x="300" y="170" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white">Audio captured</text>
+  </g>
+  
+  <!-- Step 2: Audio Encoding -->
+  <g id="step2">
+    <rect x="200" y="220" width="200" height="80" rx="10" fill="#e67e22" stroke="#d35400" stroke-width="2"/>
+    <text x="300" y="250" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="white">2. Audio Encoding</text>
+    <text x="300" y="275" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white">PCM → Base64</text>
+    <text x="300" y="290" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white">16kHz, Mono</text>
+  </g>
+  
+  <!-- Step 3: WebSocket Transport -->
+  <g id="step3">
+    <rect x="200" y="340" width="200" height="80" rx="10" fill="#f39c12" stroke="#d68910" stroke-width="2"/>
+    <text x="300" y="370" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="white">3. WebSocket</text>
+    <text x="300" y="395" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white">JSON Message</text>
+    <text x="300" y="410" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white">Session ID</text>
+  </g>
+  
+  <!-- Step 4: STT Processing -->
+  <g id="step4">
+    <rect x="500" y="100" width="200" height="80" rx="10" fill="#27ae60" stroke="#229954" stroke-width="2"/>
+    <text x="600" y="130" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="white">4. Speech-to-Text</text>
+    <text x="600" y="155" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white">Whisper Model</text>
+    <text x="600" y="170" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white">Audio → Text</text>
+  </g>
+  
+  <!-- Step 5: LLM Processing -->
+  <g id="step5">
+    <rect x="800" y="100" width="200" height="80" rx="10" fill="#2980b9" stroke="#1f618d" stroke-width="2"/>
+    <text x="900" y="130" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="white">5. LLM Processing</text>
+    <text x="900" y="155" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white">Ollama/Mistral</text>
+    <text x="900" y="170" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white">Context aware</text>
+  </g>
+  
+  <!-- Step 6: TTS Processing -->
+  <g id="step6">
+    <rect x="1100" y="100" width="200" height="80" rx="10" fill="#8e44ad" stroke="#7d3c98" stroke-width="2"/>
+    <text x="1200" y="130" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="white">6. Text-to-Speech</text>
+    <text x="1200" y="155" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white">AllTalk TTS</text>
+    <text x="1200" y="170" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white">Text → Audio</text>
+  </g>
+  
+  <!-- Step 7: Audio Response -->
+  <g id="step7">
+    <rect x="1100" y="340" width="200" height="80" rx="10" fill="#e74c3c" stroke="#c0392b" stroke-width="2"/>
+    <text x="1200" y="370" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="white">7. Audio Response</text>
+    <text x="1200" y="395" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white">WAV Format</text>
+    <text x="1200" y="410" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white">Base64 Encoded</text>
+  </g>
+  
+  <!-- Step 8: Avatar Animation -->
+  <g id="step8">
+    <rect x="1100" y="580" width="200" height="80" rx="10" fill="#16a085" stroke="#138d75" stroke-width="2"/>
+    <text x="1200" y="610" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="white">8. Avatar Animation</text>
+    <text x="1200" y="635" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white">Lip Sync</text>
+    <text x="1200" y="650" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white">Expressions</text>
+  </g>
+  
+  <!-- State Machine Display -->
+  <g id="state-machine">
+    <rect x="500" y="250" width="500" height="300" rx="10" fill="#ecf0f1" stroke="#bdc3c7" stroke-width="2" stroke-dasharray="5,5"/>
+    <text x="750" y="280" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="#34495e">State Machine</text>
+    
+    <!-- States -->
+    <circle cx="600" cy="350" r="30" fill="#3498db" stroke="#2980b9" stroke-width="2"/>
+    <text x="600" y="355" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white">IDLE</text>
+    
+    <circle cx="700" cy="350" r="30" fill="#e74c3c" stroke="#c0392b" stroke-width="2"/>
+    <text x="700" y="355" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white">LISTEN</text>
+    
+    <circle cx="800" cy="350" r="30" fill="#f39c12" stroke="#d68910" stroke-width="2"/>
+    <text x="800" y="355" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white">PROCESS</text>
+    
+    <circle cx="900" cy="350" r="30" fill="#27ae60" stroke="#229954" stroke-width="2"/>
+    <text x="900" y="355" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white">RESPOND</text>
+    
+    <circle cx="750" cy="450" r="30" fill="#9b59b6" stroke="#8e44ad" stroke-width="2"/>
+    <text x="750" y="455" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white">WAIT</text>
+    
+    <!-- State transitions -->
+    <path d="M 630 350 L 670 350" stroke="#34495e" stroke-width="2" marker-end="url(#arrow)"/>
+    <path d="M 730 350 L 770 350" stroke="#34495e" stroke-width="2" marker-end="url(#arrow)"/>
+    <path d="M 830 350 L 870 350" stroke="#34495e" stroke-width="2" marker-end="url(#arrow)"/>
+    <path d="M 900 380 L 780 450" stroke="#34495e" stroke-width="2" marker-end="url(#arrow)"/>
+    <path d="M 720 450 L 600 380" stroke="#34495e" stroke-width="2" marker-end="url(#arrow)"/>
+  </g>
+  
+  <!-- Data Format Examples -->
+  <g id="data-formats">
+    <rect x="200" y="600" width="300" height="150" rx="5" fill="#34495e" stroke="#2c3e50" stroke-width="1"/>
+    <text x="350" y="625" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="white">Message Format</text>
+    <text x="210" y="650" font-family="monospace" font-size="10" fill="#7ed6df">{</text>
+    <text x="220" y="665" font-family="monospace" font-size="10" fill="#7ed6df">  "type": "audio_data",</text>
+    <text x="220" y="680" font-family="monospace" font-size="10" fill="#7ed6df">  "session_id": "abc123",</text>
+    <text x="220" y="695" font-family="monospace" font-size="10" fill="#7ed6df">  "data": "base64...",</text>
+    <text x="220" y="710" font-family="monospace" font-size="10" fill="#7ed6df">  "timestamp": 1234567890</text>
+    <text x="210" y="725" font-family="monospace" font-size="10" fill="#7ed6df">}</text>
+  </g>
+  
+  <!-- Flow Arrows -->
+  <path d="M 140 450 L 200 140" stroke="#34495e" stroke-width="3" marker-end="url(#arrow)"/>
+  <path d="M 300 180 L 300 220" stroke="#34495e" stroke-width="3" marker-end="url(#arrow)"/>
+  <path d="M 300 300 L 300 340" stroke="#34495e" stroke-width="3" marker-end="url(#arrow)"/>
+  <path d="M 400 380 L 500 140" stroke="#34495e" stroke-width="3" marker-end="url(#arrow)"/>
+  <path d="M 700 140 L 800 140" stroke="#34495e" stroke-width="3" marker-end="url(#arrow)"/>
+  <path d="M 1000 140 L 1100 140" stroke="#34495e" stroke-width="3" marker-end="url(#arrow)"/>
+  <path d="M 1200 180 L 1200 340" stroke="#34495e" stroke-width="3" marker-end="url(#arrow)"/>
+  <path d="M 1200 420 L 1200 580" stroke="#34495e" stroke-width="3" marker-end="url(#arrow)"/>
+  <path d="M 1100 620 L 140 480" stroke="#34495e" stroke-width="3" stroke-dasharray="5,5" marker-end="url(#arrow)"/>
+  
+  <!-- Arrow marker -->
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#34495e"/>
+    </marker>
+  </defs>
+  
+  <!-- Processing Times -->
+  <g id="timing">
+    <text x="600" y="210" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" fill="#7f8c8d">~1-3s</text>
+    <text x="900" y="210" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" fill="#7f8c8d">~2-45s</text>
+    <text x="1200" y="210" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" fill="#7f8c8d">~1-5s</text>
+  </g>
+  
+  <!-- Legend -->
+  <g id="legend" transform="translate(50, 820)">
+    <text x="0" y="0" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#333">Processing Pipeline:</text>
+    <text x="0" y="20" font-family="Arial, sans-serif" font-size="12" fill="#666">1. User speech captured → 2. Audio encoded → 3. Sent via WebSocket → 4. STT transcription → 5. LLM generation</text>
+    <text x="0" y="40" font-family="Arial, sans-serif" font-size="12" fill="#666">→ 6. TTS synthesis → 7. Audio response → 8. Avatar animation with synchronized speech</text>
+  </g>
+</svg>

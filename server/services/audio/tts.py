@@ -44,7 +44,7 @@ class TTSService:
                 "retries": 3,
                 "timeout": 40,
                 "endpoints": ["tts-generate", "synthesize", "tts"],
-                "alltalk_dir": "PATH_TO_ALLTALK/alltalk_tts"
+                "alltalk_dir": "D:/AllTalk/alltalk_tts"
             },
             # "engine": "alltalk" (XTTS voices, default) or "kokoro" (tools/tts_worker.py on port 8771, about 4x faster).
             # With "kokoro" any failure falls back to AllTalk, so the interview never goes silent.

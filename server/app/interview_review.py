@@ -15,7 +15,7 @@ from datetime import datetime
 
 logger = logging.getLogger("interview_review")
 
-EXPORT_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "exports")
+EXPORT_DIR = os.environ.get("VR_EXPORT_DIR") or os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "exports")   # VR_EXPORT_DIR: tests write elsewhere
 
 
 def build_exchanges(history):
@@ -35,12 +35,14 @@ def _safe(text):
     return re.sub(r"[^A-Za-z0-9_-]+", "_", text or "")[:40]
 
 
-def export_interview(record, coach_report=None):
-    """record: {session_id, job_id, job_label, company, interviewer, started, exchanges, closing}. Returns the base path."""
-    os.makedirs(EXPORT_DIR, exist_ok=True)
+def export_interview(record, coach_report=None, export_dir=None):
+    """record: {session_id, job_id, job_label, company, interviewer, started, exchanges, closing}. Returns the base path.
+    export_dir: another folder than exports/ (the web interviews go to exports/web)."""
+    out_dir = export_dir or EXPORT_DIR
+    os.makedirs(out_dir, exist_ok=True)
     stamp = record.get("saved_at") or datetime.now().strftime("%Y-%m-%d_%H-%M")
     record["saved_at"] = stamp
-    base = os.path.join(EXPORT_DIR, f"{stamp}_{_safe(record.get('job_id'))}_{_safe(record.get('session_id'))[:8]}")
+    base = os.path.join(out_dir, f"{stamp}_{_safe(record.get('job_id'))}_{_safe(record.get('session_id'))[:8]}")
 
     data = dict(record)
     if coach_report:

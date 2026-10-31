@@ -99,6 +99,11 @@ def validate_message(message):
         if "data" not in message:
             logger.error("Audio message missing 'data' field")
             return False
+    elif msg_type == "text_data":
+        # A typed candidate turn (web build): must carry the text
+        if not isinstance(message.get("text"), str):
+            logger.error("text_data message missing 'text' string")
+            return False
     elif msg_type == "ping":
         # Ping is always valid
         # Extract the client's session ID if available

@@ -89,7 +89,7 @@ class Supervisor:
     # ------------------------------------------------------------------ restarting AllTalk
 
     def _alltalk_dir(self) -> str:
-        return getattr(self.tts_service, "alltalk_dir", None) or "PATH_TO_ALLTALK/alltalk_tts"
+        return getattr(self.tts_service, "alltalk_dir", None) or "D:/AllTalk/alltalk_tts"
 
     def _kill_alltalk(self):
         # the worker (tts_server.py) AND its launcher (script.py) must both go, or the new one cannot bind its ports

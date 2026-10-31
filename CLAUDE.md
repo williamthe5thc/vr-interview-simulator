@@ -89,8 +89,14 @@ Windows PC, Python 3.11 or newer, an NVIDIA GPU for local speech-to-text and voi
    - **Local (Ollama):** install Ollama, `ollama pull qwen2.5:7b-instruct`, then `scripts\switch_llm.ps1 local`. This is free and needs no key.
    The switch scripts write small git-ignored files in `server/config/` (`llm_backend.txt`, `interviewer_mode.txt`, `coach_mode.txt`). The server reads them at each interview, with no restart.
 4. Start everything: `powershell -ExecutionPolicy Bypass -File scripts\start_servers.ps1`. Stop: `scripts\stop_servers.ps1`. Logs go to `%TEMP%\vr_interview_logs`.
-5. **Access codes:** settings live under `"access"` in `config.json`. `require_access_code: false` means an open server, for your own LAN only.
-   Manage codes with `python tools\access_codes.py --help`. Codes are stored hashed in `config/access_codes.json` (git-ignored).
+5. **Access codes** (full guide: [`server/docs/ACCESS_CODES.md`](server/docs/ACCESS_CODES.md)). Running your own server means
+   `"access": {"require_access_code": true}` in `config.json` **plus your own codes**. With an empty codes file every headset is refused, your own included.
+   - Make a code: `.venv\Scripts\python.exe tools\access_codes.py add "Name" --per-day 5`. It's printed once; only a salted hash is stored in `config/access_codes.json` (git-ignored).
+   - `list`, `revoke "Name"`, `usage`, and `disable` / `enable` (kill switch: the file `config/quest_disabled`). No restart is needed.
+   - Daily limits, spend caps per code and overall, and wrong-code lockouts live in `data/access_state.json` (git-ignored).
+   - Behind a tunnel or reverse proxy, add that host's address to `access.trusted_proxies` so the server sees the real client address.
+     `cf_team_domain` / `cf_access_aud` let Cloudflare Access web sessions skip the code; leave them empty if you don't use Access.
+   - `require_access_code: false` is the old open behaviour. Use it only on a private network.
 6. **Restart rule:** before restarting a live server, check that port 8765 has no open connections, and tell the people using it.
 
 Server tests: `python -m pytest test_scripts -q` (set `VR_EXPORT_DIR` to a temporary folder first).

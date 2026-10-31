@@ -346,7 +346,7 @@ STAYING ON TRACK
     },
     
     "interviewer_names": {
-        "neutral": ["Alex Johnson", "Morgan Zhang", "Jamie Rivera", "Taylor Wilson"],
+        "neutral": ["Alex Johnson", "Morgan Zhang", "Jordan Rivera", "Taylor Wilson"],
         "supportive": ["Sam Brooks", "Jamie Chen", "Casey Thompson", "Riley Garcia"],
         "challenging": ["Dr. Morgan Reed", "Victoria Palmer", "Michael Sterling", "Alexis Wright"],
         "technical": ["Dr. Ray Chen", "Priya Patel", "Eliot Washington", "Cameron Martinez"]

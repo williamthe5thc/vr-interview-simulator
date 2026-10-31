@@ -3,7 +3,7 @@ Optional hosted-model backend for the interviewer: Claude Haiku 5.5 over the Ant
 
 Switching is a one-word file, so it can be turned on and off WITHOUT restarting the server:
     config\\llm_backend.txt   contains "anthropic" or "local" (missing or anything else = local, the Ollama model)
-scripts\\switch_llm.ps1 writes that file. The next reply uses the new setting.
+Tools\\switch_llm.ps1 writes that file. The next reply uses the new setting.
 
 Safety: the key is read from the user environment variable VRSIM_ANTHROPIC_API_KEY (process environment first, then the Windows
 user registry) and goes only into the x-api-key header; it is never logged or stored. Estimated spend is tracked per server run and

@@ -1,4 +1,5 @@
 {
+  "__comment": "Copy to config.json (git-ignored) and edit. No API keys here: they live in user environment variables (VRSIM_ANTHROPIC_API_KEY). access: require_access_code=true needs your own codes (tools/access_codes.py, see docs/ACCESS_CODES.md); add your tunnel/proxy host to trusted_proxies; cf_team_domain is your Cloudflare Access team (e.g. YOUR_TEAM.cloudflareaccess.com), empty = no web session skips the code.",
   "server": {
     "host": "0.0.0.0",
     "port": 8765,
@@ -47,5 +48,31 @@
     "alltalk_dir": "PATH_TO_ALLTALK/alltalk_tts",
     "default_language": "en"
   },
-  "engine": "kokoro"
+  "engine": "kokoro",
+  "access": {
+    "require_access_code": true,
+    "cf_team_domain": "",
+    "cf_access_aud": [],
+    "quest_daily_usd_cap": 1.0,
+    "code_usd_per_day": 0.25,
+    "trusted_proxies": [
+      "127.0.0.1",
+      "::1"
+    ]
+  },
+  "web": {
+    "allowed_origins": [
+      "https://YOUR_WEB_HOST"
+    ],
+    "max_sessions": 2,
+    "max_turns_per_session": 12,
+    "session_usd_cap": 0.05,
+    "daily_usd_cap": 2.0,
+    "interviews_per_hour_per_identity": 3,
+    "export": "save",
+    "heartbeat_seconds": 25,
+    "coach": "haiku",
+    "max_text_chars": 1500,
+    "max_text_words": 250
+  }
 }

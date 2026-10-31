@@ -1,0 +1,63 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# Documents
+*.md text
+*.txt text
+*.rst text
+*.pdf binary
+
+# Scripts
+*.py text
+*.sh text eol=lf
+*.bat text eol=crlf
+
+# Serialization
+*.json text
+*.yaml text
+*.yml text
+*.toml text
+*.xml text
+
+# Graphics
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.svg text
+
+# Audio
+*.wav binary
+*.mp3 binary
+*.ogg binary
+*.flac binary
+
+# Archives
+*.zip binary
+*.tar binary
+*.gz binary
+*.7z binary
+
+# Executables
+*.exe binary
+*.dll binary
+*.so binary
+*.dylib binary
+
+# Unity
+*.unity binary
+*.prefab binary
+*.mat binary
+*.meta text
+*.asset binary
+*.controller binary
+*.anim binary
+
+# Specific files
+.gitignore text
+.gitattributes text
+LICENSE text
+README.md text
+CHANGELOG.md text
+requirements.txt text

@@ -16,6 +16,7 @@ from typing import List, Dict, Any, Optional, Callable, Union
 import re
 import random
 import importlib
+from services.llm.web_context import WEB
 
 
 class OllamaClient:
@@ -132,7 +133,7 @@ class OllamaClient:
     INTERVIEWER_MODE_FILE = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "config", "interviewer_mode.txt")
 
     def _read_interviewer_mode(self) -> str:
-        """The interviewer mode, judgement or scripted: the word in config/interviewer_mode.txt (written by scripts/switch_interviewer.ps1), else the config value."""
+        """The interviewer mode, judgement or scripted: the word in config/interviewer_mode.txt (written by Tools/switch_interviewer.ps1), else the config value."""
         override = self.config.get("interviewer_mode_override")
         if override:
             return override
@@ -885,13 +886,15 @@ class OllamaClient:
 
         def chunks():
             """Ollama-style chunks from the hosted backend when it is switched on (and healthy), else from the local Ollama model."""
+            if WEB.get() and not self._anth.active():     # a web session never runs on the local model
+                raise RuntimeError("the hosted model is not available for a web session")
             if self._anth.active() and not self._force_scripted:
                 got = False
                 hosted["on"] = True
                 a_msgs = [dict(m) for m in messages]
                 if a_msgs and a_msgs[0]["role"] == "system":      # the voice starts on the first sentence, so make it short
                     a_msgs[0]["content"] += "\n\nSpeech timing: keep your first sentence under 15 words."
-                limit = self.config.get("anthropic_first_token_timeout_s", 2.0)
+                limit = None if WEB.get() else self.config.get("anthropic_first_token_timeout_s", 2.0)   # web: wait, never swap models
                 try:
                     for c in self._anth.stream_chunks(a_msgs, payload["options"]["num_predict"], payload["options"]["temperature"],
                                                       payload["options"]["stop"], limit):
@@ -904,6 +907,8 @@ class OllamaClient:
                     self.logger.warning(f"FALLBACK to local model ({self.model}) for this reply: Anthropic stream gave no text "
                                         f"({type(e).__name__}: {str(e)[:100]}); fallbacks so far {self._anth.fallbacks}")
                     hosted["on"] = False
+                    if WEB.get():
+                        raise
                     if self._judgement:      # the local model must not get the hosted-model prompt: redo this turn the scripted way
                         hosted["legacy"] = True
                         return
@@ -1483,6 +1488,8 @@ class OllamaClient:
                 self.logger.warning("Anthropic reply was empty after cleaning; using the local model")
             except Exception as e:
                 self.logger.warning(f"Anthropic call failed ({str(e)[:120]}); using the local model")
+            if WEB.get():                                  # a web session never falls back to the local model: a short polite line instead
+                return self._fallback_line()
             if self._judgement and getattr(self, "_turn_args", None):
                 # the local model gets the scripted prompt, not the one written for the hosted model
                 self._force_scripted = True
@@ -1491,6 +1498,8 @@ class OllamaClient:
                 finally:
                     self._force_scripted = False
                 payload["messages"] = messages
+        if WEB.get():                                      # hosted model off or capped: still no local model for a web session
+            return self._fallback_line()
 
         self.logger.debug(f"Sending request to Ollama: {api_url}")
         start_time = time.time()

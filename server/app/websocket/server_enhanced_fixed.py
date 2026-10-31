@@ -12,6 +12,7 @@ import re
 import logging
 import time
 import threading
+import copy
 import uuid
 import base64
 import traceback
@@ -19,6 +20,8 @@ from typing import Dict, Any, Optional, Set
 from websockets import serve, ConnectionClosed
 
 from app.websocket.enhanced_stream_processor import EnhancedStreamProcessor
+from app.web_guard import WebGuard
+from services.llm.web_context import WEB
 from app.websocket.protocol import encode_message, decode_message, validate_message
 from app.state.session import Session
 from app.utils.error_handler import ErrorHandler
@@ -78,7 +81,38 @@ class WebSocketServer:
         self._health_task = None
         self._last_status_text = ""
 
+        # gated live web version (browser sessions have their own limits, client and spend; see app/web_guard.py)
+        self.web = WebGuard()
+        self.web_clients = {}
+        self.web_heartbeats = {}
+
+        # access codes for the headset app on the public quest hostname (see app/access_codes.py and docs/ACCESS_CODES.md)
+        from app.access_codes import AccessGate
+        self.access = AccessGate()
+
         self.logger.info("Enhanced WebSocket server initialized")
+
+    def _llm(self, session_id):
+        """The language-model client for a session: a web session has its own (its own persona, interviewer and spend), everyone else the shared one."""
+        return self.web_clients.get(session_id) or self.llm_client
+
+    def _new_web_client(self):
+        base = self.llm_client
+        client = base.__class__(base.url, base.model, base.context_length, config=copy.deepcopy(base.config))
+        if hasattr(client, "_anth"):
+            client._anth.cap = float(self.web.cfg["session_usd_cap"]) * 2      # headroom for the coach after the interview
+        return client
+
+    async def _web_keepalive(self, session_id):
+        """An app-level keepalive for web sessions (an unsolicited pong), in case the proxy does not count protocol pings."""
+        try:
+            while True:
+                await asyncio.sleep(float(self.web.cfg["heartbeat_seconds"]))
+                await self.send_pong(session_id)
+        except asyncio.CancelledError:
+            raise
+        except Exception:
+            return
 
     async def start(self):
         """Start the WebSocket server"""
@@ -88,8 +122,10 @@ class WebSocketServer:
             self.port,
             ping_interval=30,
             ping_timeout=10,
-            max_size=10485760  # Increase to 10MB (default is ~1MB)
+            max_size=10485760,  # Increase to 10MB (default is ~1MB)
+            origins=self.web.allowed_origins()   # browsers must come from the allowed page; native clients send no Origin and pass
         )
+        self.web.install_log_filter()
         self.logger.info(f"WebSocket server started on {self.host}:{self.port}")
         self._health_task = asyncio.create_task(self._health_loop())
         print(f"\nVR Interview Server running at ws://{self.host}:{self.port}")
@@ -166,6 +202,26 @@ class WebSocketServer:
         """Handle a new WebSocket connection"""
         session_id = str(uuid.uuid4())
         self.logger.info(f"New connection established: {session_id}")
+
+        # the access code comes first: nothing else is read or started until it is accepted
+        if self.access.required and not await self.access.is_trusted_web(websocket, self.web.cfg.get("allowed_origins")):
+            if await self.access.authenticate(websocket, session_id) is None:
+                return
+            asyncio.ensure_future(websocket.wait_closed()).add_done_callback(lambda _: self.access.release(session_id))
+
+        web = self.web.is_web(websocket)
+        if web:
+            ok, why = self.web.admit(session_id, self.web.identity(websocket), self.web.email(websocket))
+            if not ok:
+                self.logger.info(f"Web connection refused: {why}")
+                try:
+                    await websocket.send(json.dumps({"type": "error", "code": 503, "message": why, "timestamp": time.time()}))
+                    await websocket.close(1013, "busy")
+                except Exception:
+                    pass
+                return
+            self.web_clients[session_id] = self._new_web_client()
+            self.logger.info(f"Web session {session_id} admitted")
         
         # Create a new session
         session = Session(session_id, websocket)
@@ -179,8 +235,11 @@ class WebSocketServer:
         await websocket.send(json.dumps({
             "type": "session_init",
             "session_id": session_id,
-            "timestamp": time.time()
+            "timestamp": time.time(),
+            "capabilities": self.web.capabilities()
         }))
+        if web:
+            self.web_heartbeats[session_id] = asyncio.create_task(self._web_keepalive(session_id))
         
         # Send initial IDLE state
         await self.state_manager.transition_state(session_id, "IDLE", {
@@ -288,9 +347,18 @@ class WebSocketServer:
             if task in self.session_tasks[session_id]:
                 self.session_tasks[session_id].remove(task)
     
+    finish_on_disconnect = True      # a tester who just closes the tab still gets their interview saved (web sessions, when exports are kept)
+
     async def _cleanup_session(self, session_id: str):
         """Clean up a session's resources"""
         self.logger.info(f"Starting cleanup for session: {session_id}")
+        if self.finish_on_disconnect and self.web.is_web_session(session_id) and self.web.cfg.get("export") in ("save", "anonymous"):
+            try:
+                session = self.state_manager.get_session(session_id)
+                if session is not None:
+                    await self._finish_interview(session_id, session)
+            except Exception as e:
+                self.logger.error(f"Could not save the web interview at disconnect: {e}")
         
         # Clean up stream processor tracking if available
         if hasattr(self, 'stream_processor') and self.stream_processor is not None:
@@ -319,6 +387,13 @@ class WebSocketServer:
             self.logger.info(f"Stopping heartbeat for session {session_id}")
             await self.heartbeat_service.stop_heartbeat(session_id)
             
+        # web session bookkeeping
+        hb = self.web_heartbeats.pop(session_id, None)
+        if hb and not hb.done():
+            hb.cancel()
+        self.web_clients.pop(session_id, None)
+        self.web.release(session_id)
+
         # Remove from active connections
         if session_id in self.active_connections:
             self.logger.info(f"Removing session {session_id} from active_connections")
@@ -344,15 +419,21 @@ class WebSocketServer:
         try:
             # Decode and validate the message
             msg_data = decode_message(message)
+            if isinstance(msg_data, dict) and msg_data.get("type") == "auth":
+                # already past the gate (or codes are switched off / a Cloudflare Access web session): a client that always sends it is fine
+                await self._send_json(session_id, {"type": "auth_result", "ok": True, "label": "", "limits": None})
+                return
             if not validate_message(msg_data):
                 await self.send_error(session_id, 400, "Invalid message format")
                 return
-                
+
             msg_type = msg_data.get("type")
-            
+
             # Extract client's session ID from the message if available
             client_session_id = msg_data.get("session_id", session_id)
-            
+            if session_id in self.access.active:
+                client_session_id = session_id     # an access-code session may only act on itself (its limits are counted per session)
+
             # Handle session ID mismatch (common with reconnections)
             if client_session_id != session_id and client_session_id:
                 self.logger.info(f"Session ID mismatch: Message uses {client_session_id}, server using {session_id}")
@@ -381,6 +462,8 @@ class WebSocketServer:
                 await self.send_pong(session_id)
             elif msg_type == "control":
                 await self.process_control(session_id, msg_data)
+            elif msg_type == "text_data":
+                await self.process_text(session_id, msg_data)
             elif msg_type == "playback_complete":
                 await self.handle_playback_complete(session_id, msg_data)
             elif msg_type == "client_capabilities":
@@ -427,6 +510,13 @@ class WebSocketServer:
                 )
                 return
                 
+            ok, why = self.web.check_turn(session_id)
+            if ok:
+                ok, why = self.access.allow_turn(session_id)     # kill switch and spend caps of access-code sessions
+            if not ok:
+                await self.send_error(session_id, 429, why)
+                return
+
             # Transition to LISTENING
             await self.state_manager.transition_state(session_id, "LISTENING", {
                 "message": "Receiving audio"
@@ -439,7 +529,7 @@ class WebSocketServer:
                 return
                 
             # Determine whether to use streaming or standard pipeline
-            config = getattr(self.llm_client, 'config', {}) or {}
+            config = getattr(self._llm(session_id), 'config', {}) or {}
             use_streaming = config.get('use_streaming', True)
             
             if use_streaming:
@@ -477,7 +567,46 @@ class WebSocketServer:
                     "error": str(e)
                 })
 
+    async def process_text(self, session_id: str, message: Dict[str, Any]):
+        """A typed candidate turn ({"type": "text_data", "text": ...}): the normal turn without speech-to-text, same size limits as speech."""
+        text, why = self.web.check_text(message.get("text"))
+        if not text:
+            await self.send_error(session_id, 400, why)
+            return
+        current_state = self.state_manager.get_session_state(session_id)
+        if str(current_state) == "ERROR":
+            await self.state_manager.transition_state(session_id, "WAITING", {"message": "Recovered, listening again"})
+            current_state = self.state_manager.get_session_state(session_id)
+        if current_state not in ["IDLE", "WAITING"]:
+            self.logger.warning(f"Ignoring typed text in state {current_state}")
+            return
+        ok, why = self.web.check_turn(session_id)
+        if ok:
+            ok, why = self.access.allow_turn(session_id)     # kill switch and spend caps of access-code sessions
+        if not ok:
+            await self.send_error(session_id, 429, why)
+            return
+        self.logger.info(f"Typed turn: {len(text.split())} words for session {session_id}")
+        await self.state_manager.transition_state(session_id, "LISTENING", {"message": "Typed turn"})
+        task = asyncio.create_task(self.process_audio_pipeline(session_id, b"", forced_transcript=text))
+        self._track_task(task, session_id)
+
     async def process_audio_pipeline(self, session_id: str, audio_data: bytes, forced_transcript: Optional[str] = None):
+        """One turn. For a web session: marks the context (no local-model fallback, no words in the log) and adds the turn's estimated API cost."""
+        web = self.web.is_web_session(session_id)
+        token = WEB.set(web)
+        anth = getattr(self._llm(session_id), "_anth", None)
+        before = getattr(anth, "spent", 0.0)
+        try:
+            return await self._process_audio_pipeline_inner(session_id, audio_data, forced_transcript)
+        finally:
+            WEB.reset(token)
+            if web and anth is not None:
+                self.web.add_spend(session_id, getattr(anth, "spent", 0.0) - before)
+            elif anth is not None:
+                self.access.add_spend(session_id, getattr(anth, "spent", 0.0) - before)
+
+    async def _process_audio_pipeline_inner(self, session_id: str, audio_data: bytes, forced_transcript: Optional[str] = None):
         """
         Full audio processing pipeline - runs asynchronously to avoid blocking the WebSocket.
         This improved version uses granular processing states for better progress tracking.
@@ -656,7 +785,7 @@ class WebSocketServer:
             
             # Streamed reply: speak sentence 1 while the model is still writing the rest (config ollama.stream_reply).
             # It returns False when it failed before anything was sent, and the normal path below then runs.
-            if self.llm_client.config.get("stream_reply", False) and hasattr(self.llm_client, "stream_response"):
+            if self._llm(session_id).config.get("stream_reply", False) and hasattr(self._llm(session_id), "stream_response"):
                 if await self._streamed_turn(session_id, transcript, session, interaction_stage, heartbeat_task, safety_timer,
                                              turn_t0=turn_t0, stt_s=stt_s):
                     return
@@ -665,7 +794,7 @@ class WebSocketServer:
             try:
                 llm_future = asyncio.create_task(
                     asyncio.to_thread(
-                        self.llm_client.generate_response,
+                        self._llm(session_id).generate_response,
                         transcript,
                         session.get_context(),
                         None,  # default timeout
@@ -1019,7 +1148,7 @@ class WebSocketServer:
 
         def produce():
             try:
-                for sentence in self.llm_client.stream_response(transcript, context, interaction_stage):
+                for sentence in self._llm(session_id).stream_response(transcript, context, interaction_stage):
                     loop.call_soon_threadsafe(queue.put_nowait, sentence)
             except Exception as e:  # reported to the consumer below
                 loop.call_soon_threadsafe(queue.put_nowait, e)
@@ -1180,14 +1309,21 @@ class WebSocketServer:
 
         elif action == "begin":
             # The interviewer speaks first: run the normal pipeline with a canned candidate greeting instead of audio
+            ok, why = self.web.allow_begin(session_id)
+            if ok:
+                ok, why = self.access.count_interview(session_id)     # interviews per day for this access code
+            if not ok:
+                await self.send_error(session_id, 429, why)
+                return
             threading.Thread(target=self._warm_up, daemon=True).start()   # keep speech-to-text (and the local fallback model) warm
+            llm = self._llm(session_id)
             job_id = message.get("job")
-            if job_id and hasattr(self.llm_client, "set_job"):
-                self.llm_client.set_job(job_id)
+            if job_id and hasattr(llm, "set_job"):
+                llm.set_job(job_id)
             # the headset chooses which interviewer (character) is sitting there: use her/his name and a matching voice
             interviewer_name = message.get("interviewer")
             if interviewer_name:
-                self.llm_client.interviewer_name = interviewer_name
+                llm.interviewer_name = interviewer_name
                 if hasattr(self.tts_service, "set_interviewer"):
                     self.tts_service.set_interviewer(interviewer_name)   # picks that interviewer's voice when engine = kokoro
             voice = message.get("voice")
@@ -1209,6 +1345,9 @@ class WebSocketServer:
                     self.process_audio_pipeline(session_id, b"", forced_transcript="Hello.")
                 )
                 self._track_task(task, session_id)
+
+        elif action == "say" and self.web.is_web_session(session_id):
+            self.logger.info("Ignoring dev action 'say' from a web session")
 
         elif action == "say":
             # Test/dev only (the headset never sends this): run one candidate turn from typed text instead of audio,
@@ -1261,7 +1400,9 @@ class WebSocketServer:
             exchanges = review.build_exchanges(history)
             if len(exchanges) < 2:
                 return
-            persona = getattr(self.llm_client, "persona", {}) or {}
+            llm = self._llm(session_id)
+            web = self.web.is_web_session(session_id)
+            persona = getattr(llm, "persona", {}) or {}
             job_id = persona.get("job_id") or "software_engineer"
             job = job_interview.JOB_CATALOG.get(job_id, {})
             record = {
@@ -1269,13 +1410,26 @@ class WebSocketServer:
                 "job_id": job_id,
                 "job_label": job.get("label", job_id),
                 "company": job.get("company", ""),
-                "interviewer": getattr(self.llm_client, "interviewer_name", "") or "",
+                "interviewer": getattr(llm, "interviewer_name", "") or "",
                 "started": history[0].get("timestamp", ""),
                 "exchanges": exchanges,
                 "closing": (history[-1].get("system_response") or "") if history else "",
             }
-            base = await asyncio.to_thread(review.export_interview, record)
             self.last_interviews = getattr(self, "last_interviews", {})
+            if web:
+                record["source"] = "web"
+                mode = self.web.cfg.get("export")
+                if mode in ("anonymous", "save"):
+                    if mode == "save":      # testing policy: keep it and say which tester it was (the Cloudflare Access e-mail, if any)
+                        record["tester"] = self.web.session_email(session_id)
+                    base = await asyncio.to_thread(review.export_interview, record, None, os.path.join(review.EXPORT_DIR, "web"))
+                else:       # "none": the practice stays in memory for the coach and is never written
+                    base = ""
+                self.last_interviews[session_id] = {"record": record, "base": base}
+                await self._send_json(session_id, {"type": "export_saved", "filename": (os.path.basename(base) + ".md") if base else "",
+                                                   "questions": len(exchanges), "saved": bool(base)})
+                return
+            base = await asyncio.to_thread(review.export_interview, record)
             self.last_interviews[session_id] = {"record": record, "base": base}
             await self._send_json(session_id, {"type": "export_saved", "filename": os.path.basename(base) + ".md",
                                                "questions": len(exchanges)})
@@ -1300,12 +1454,31 @@ class WebSocketServer:
 
             self.logger.info(f"Coach review started for {session_id} ({len(record['exchanges'])} answers)")
             started = time.time()
-            report = await asyncio.to_thread(review.generate_coach_report, self.llm_client, record,
-                                             job_interview.get_job_info(record["job_id"]), progress)
+            web = self.web.is_web_session(session_id)
+            llm = self._llm(session_id)
+            if web:
+                from app import coach_v2
+                anth = getattr(llm, "_anth", None)
+                if anth is None or not anth.active():
+                    await self._send_json(session_id, {"type": "coach_report", "error": "The coach is not available right now.",
+                                                       "summary": "", "strengths": [], "focus": [], "items": []})
+                    return
+                before = anth.spent
+                # web visitors always get the redesigned coach on Haiku (cents), whatever coach_mode says
+                report = await asyncio.to_thread(coach_v2.generate, llm, record, job_interview.get_job_info(record["job_id"]), progress, False)
+                self.web.add_spend(session_id, anth.spent - before)
+            else:
+                anth = getattr(llm, "_anth", None)
+                before = getattr(anth, "spent", 0.0)
+                report = await asyncio.to_thread(review.generate_coach_report, llm, record,
+                                                 job_interview.get_job_info(record["job_id"]), progress)
+                self.access.add_spend(session_id, getattr(anth, "spent", 0.0) - before)
             self.logger.info(f"Coach review finished in {time.time() - started:.1f}s")
-            await asyncio.to_thread(review.export_interview, record, report)   # same file name, now with the coach notes
+            if not web or saved["base"]:
+                base_dir = os.path.join(review.EXPORT_DIR, "web") if web else None
+                await asyncio.to_thread(review.export_interview, record, report, base_dir)   # same file name, now with the coach notes
             report["type"] = "coach_report"
-            report["filename"] = os.path.basename(saved["base"]) + ".md"
+            report["filename"] = (os.path.basename(saved["base"]) + ".md") if saved["base"] else ""
             await self._send_json(session_id, report)
         except Exception as e:
             self.logger.error(f"Coach review failed for {session_id}: {e}", exc_info=True)
@@ -1375,7 +1548,7 @@ class WebSocketServer:
                 message["seq"] = seq         # the mouth cues for this chunk follow in a "visemes" message with the same seq
 
                 # Flag the interviewer's closing reply so the client can run its ending sequence
-                if getattr(self.llm_client, "last_stage", None) == "conclusion":
+                if getattr(self._llm(session_id), "last_stage", None) == "conclusion":
                     message["interview_complete"] = True
                 
                 # Include text response as a fallback

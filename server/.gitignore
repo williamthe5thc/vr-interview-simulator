@@ -1,0 +1,150 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+PIPFILE.lock
+
+# Virtual Environment
+.venv/
+venv/
+ENV/
+env/
+
+# Logs
+logs/
+*.log
+server_diagnostic.log
+
+# Data and Cache
+data/audio/
+data/conversations/
+data/cache/
+audio_out/
+voice_test_results/
+benchmark_results/
+
+# Temporary files
+*.tmp
+*.temp
+*.cache
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+*.sublime-project
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# Backup files
+*.bak
+*.backup
+backups/
+
+# Test coverage
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+.pytest_cache/
+cover/
+*.cover
+*.py,cover
+.hypothesis/
+
+# Documentation builds
+docs/_build/
+docs/.doctrees/
+
+# Package files
+*.tar.gz
+*.zip
+*.rar
+*.7z
+
+# Model files (large files)
+models/
+*.pth
+*.pt
+*.onnx
+*.bin
+*.safetensors
+
+# Audio models
+whisper_models/
+
+# Config overrides (keep the template)
+config/config.override.json
+config/config.local.json
+# interview exports contain real answers; local tools; editing backups
+exports/
+tools/rhubarb/
+*.bak_claude*
+
+# local worker environments, models and test output (added 2026-10-06)
+.venv_fw/
+.venv_tts/
+models/kokoro/
+tts_ab/
+tts_ab_run.log
+logs/prompt_ab/
+backups/
+
+# real interview transcripts, ratings, the model key, the public bundle passcode, and per-machine switch files (added 2026-10-10)
+model_compare/
+config/*_backend.txt
+config/interviewer_mode.txt
+config/coach_mode.txt
+*.bak_err
+
+# access codes for the headset app: hashed codes and per-code usage/lockouts (added 2026-10-31)
+config/access_codes.json
+data/access_state.json
+
+# runtime state and stray caches, kept out of git (added 2026-10-31)
+ffcache*
+data/web_spend*.json
+# a recorded speech clip used to warm up speech-to-text: not committed in case it is a real voice
+tools/stt_warm.wav
+config/quest_disabled

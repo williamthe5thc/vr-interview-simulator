@@ -1,0 +1,120 @@
+<svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="1200" height="800" fill="#f8f9fa"/>
+  
+  <!-- Title -->
+  <text x="600" y="40" font-family="Arial, sans-serif" font-size="28" font-weight="bold" text-anchor="middle" fill="#2c3e50">VR Interview System Architecture</text>
+  
+  <!-- VR Client Section -->
+  <g id="vr-client">
+    <rect x="50" y="100" width="300" height="600" rx="10" fill="#e8f4f8" stroke="#2196F3" stroke-width="2"/>
+    <text x="200" y="130" font-family="Arial, sans-serif" font-size="20" font-weight="bold" text-anchor="middle" fill="#2196F3">VR Client (Quest)</text>
+    
+    <!-- VR Components -->
+    <rect x="70" y="160" width="260" height="50" rx="5" fill="#B3E5FC" stroke="#0288D1" stroke-width="1"/>
+    <text x="200" y="190" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#01579B">Unity Application</text>
+    
+    <rect x="70" y="230" width="260" height="50" rx="5" fill="#B3E5FC" stroke="#0288D1" stroke-width="1"/>
+    <text x="200" y="260" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#01579B">Avatar System</text>
+    
+    <rect x="70" y="300" width="260" height="50" rx="5" fill="#B3E5FC" stroke="#0288D1" stroke-width="1"/>
+    <text x="200" y="330" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#01579B">Audio Capture/Playback</text>
+    
+    <rect x="70" y="370" width="260" height="50" rx="5" fill="#B3E5FC" stroke="#0288D1" stroke-width="1"/>
+    <text x="200" y="400" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#01579B">UI/Transcript Display</text>
+    
+    <rect x="70" y="440" width="260" height="50" rx="5" fill="#B3E5FC" stroke="#0288D1" stroke-width="1"/>
+    <text x="200" y="470" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#01579B">WebSocket Client</text>
+    
+    <rect x="70" y="510" width="260" height="50" rx="5" fill="#B3E5FC" stroke="#0288D1" stroke-width="1"/>
+    <text x="200" y="540" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#01579B">Session Manager</text>
+  </g>
+  
+  <!-- Python Server Section -->
+  <g id="python-server">
+    <rect x="450" y="100" width="350" height="600" rx="10" fill="#f0f8f0" stroke="#4CAF50" stroke-width="2"/>
+    <text x="625" y="130" font-family="Arial, sans-serif" font-size="20" font-weight="bold" text-anchor="middle" fill="#4CAF50">Python Server</text>
+    
+    <!-- Server Components -->
+    <rect x="470" y="160" width="310" height="40" rx="5" fill="#C8E6C9" stroke="#388E3C" stroke-width="1"/>
+    <text x="625" y="185" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#1B5E20">WebSocket Server</text>
+    
+    <rect x="470" y="210" width="310" height="40" rx="5" fill="#C8E6C9" stroke="#388E3C" stroke-width="1"/>
+    <text x="625" y="235" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#1B5E20">State Manager</text>
+    
+    <rect x="470" y="260" width="310" height="40" rx="5" fill="#C8E6C9" stroke="#388E3C" stroke-width="1"/>
+    <text x="625" y="285" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#1B5E20">Audio Stream Processor</text>
+    
+    <rect x="470" y="310" width="150" height="40" rx="5" fill="#C8E6C9" stroke="#388E3C" stroke-width="1"/>
+    <text x="545" y="335" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#1B5E20">STT Service</text>
+    
+    <rect x="630" y="310" width="150" height="40" rx="5" fill="#C8E6C9" stroke="#388E3C" stroke-width="1"/>
+    <text x="705" y="335" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#1B5E20">TTS Service</text>
+    
+    <rect x="470" y="360" width="310" height="40" rx="5" fill="#C8E6C9" stroke="#388E3C" stroke-width="1"/>
+    <text x="625" y="385" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#1B5E20">LLM Client (Ollama)</text>
+    
+    <rect x="470" y="410" width="310" height="40" rx="5" fill="#C8E6C9" stroke="#388E3C" stroke-width="1"/>
+    <text x="625" y="435" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#1B5E20">Error Handler</text>
+    
+    <rect x="470" y="460" width="310" height="40" rx="5" fill="#C8E6C9" stroke="#388E3C" stroke-width="1"/>
+    <text x="625" y="485" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#1B5E20">Heartbeat Service</text>
+    
+    <rect x="470" y="510" width="310" height="40" rx="5" fill="#C8E6C9" stroke="#388E3C" stroke-width="1"/>
+    <text x="625" y="535" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#1B5E20">Session Storage</text>
+  </g>
+  
+  <!-- External Services Section -->
+  <g id="external-services">
+    <rect x="900" y="100" width="250" height="600" rx="10" fill="#fff3e0" stroke="#FF9800" stroke-width="2"/>
+    <text x="1025" y="130" font-family="Arial, sans-serif" font-size="20" font-weight="bold" text-anchor="middle" fill="#FF9800">External Services</text>
+    
+    <!-- External Components -->
+    <rect x="920" y="200" width="210" height="120" rx="5" fill="#FFE0B2" stroke="#F57C00" stroke-width="1"/>
+    <text x="1025" y="230" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#E65100">Ollama</text>
+    <text x="1025" y="255" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#BF360C">Local LLM Server</text>
+    <text x="1025" y="275" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#BF360C">Models: Mistral, Phi</text>
+    <text x="1025" y="295" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#BF360C">Port: 11434</text>
+    
+    <rect x="920" y="350" width="210" height="120" rx="5" fill="#FFE0B2" stroke="#F57C00" stroke-width="1"/>
+    <text x="1025" y="380" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#E65100">AllTalk TTS</text>
+    <text x="1025" y="405" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#BF360C">Voice Synthesis</text>
+    <text x="1025" y="425" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#BF360C">Streaming Support</text>
+    <text x="1025" y="445" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#BF360C">Port: 7851</text>
+    
+    <rect x="920" y="500" width="210" height="100" rx="5" fill="#FFE0B2" stroke="#F57C00" stroke-width="1"/>
+    <text x="1025" y="530" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#E65100">Whisper</text>
+    <text x="1025" y="555" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#BF360C">Speech-to-Text</text>
+    <text x="1025" y="575" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#BF360C">Local Processing</text>
+  </g>
+  
+  <!-- Connection Arrows -->
+  <!-- VR to Server -->
+  <path d="M 350 400 L 450 400" stroke="#666" stroke-width="3" fill="none" marker-end="url(#arrowhead)"/>
+  <text x="400" y="395" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#666">WebSocket</text>
+  
+  <!-- Server to Ollama -->
+  <path d="M 800 380 L 900 260" stroke="#666" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  <text x="850" y="320" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#666">API</text>
+  
+  <!-- Server to AllTalk -->
+  <path d="M 800 380 L 900 410" stroke="#666" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  <text x="850" y="395" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#666">HTTP</text>
+  
+  <!-- Server to Whisper (internal) -->
+  <path d="M 545 350 L 545 500" stroke="#666" stroke-width="2" stroke-dasharray="5,5"/>
+  <text x="570" y="425" font-family="Arial, sans-serif" font-size="12" fill="#666">Internal</text>
+  
+  <!-- Arrow marker definition -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#666"/>
+    </marker>
+  </defs>
+  
+  <!-- Legend -->
+  <g id="legend" transform="translate(50, 730)">
+    <text x="0" y="0" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#333">Key Technologies:</text>
+    <text x="150" y="0" font-family="Arial, sans-serif" font-size="12" fill="#666">Unity 2022.3 | C# | Oculus SDK | WebSockets | Python 3.9+ | asyncio | Whisper | Ollama | AllTalk</text>
+  </g>
+</svg>

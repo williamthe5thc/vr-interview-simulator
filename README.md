@@ -38,7 +38,7 @@ Verified on a Meta Quest 1 headset in October 2026:
 
 - Bare-hand tracking with pinch input (OpenXR + XR Hands). It works in a separate test build.
 - A blind comparison of local and hosted language models, rated by people.
-- A prototype of a second practice scenario: a parent and child conversation (`server/app/parent_child/`).
+- A second practice scenario, a parent and child conversation. The parent-child practice server is not included yet; it is waiting for clinical review.
 
 ## Architecture
 

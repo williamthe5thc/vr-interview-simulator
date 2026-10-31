@@ -200,7 +200,7 @@ class PlatformUtils:
     def get_alltalk_default_path():
         """Get the default AllTalk installation path for the current platform."""
         if PlatformUtils.is_windows():
-            return "PATH_TO_ALLTALK/alltalk_tts"
+            return "D:/AllTalk/alltalk_tts"
         elif PlatformUtils.is_mac():
             return os.path.join(os.path.expanduser('~'), 'Applications', 'AllTalk')
         else:  # Linux
