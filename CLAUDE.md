@@ -55,6 +55,9 @@ Batch build (Windows, Editor closed):
 
 - Output: `unity/Builds/VRInterviewSim_Conference.apk`, about 200 MB, package `com.vrforgoodofzion.vrinterviewsim`.
 - Success line in the log: `[QuestBuild] result=Succeeded`. The script is `unity/Assets/Editor/QuestBuild.cs`.
+- **First build after a fresh clone:** Unity skips the Oculus plugin's manifest step on the very first build of a new `Library/`, so the APK would lack the Quest entries and keep a BLUETOOTH permission.
+  `QuestBuild` checks the finished APK, deletes a wrong one and exits with code 1 ("manifest check FAILED ... run the same command again").
+  Run the same command a second time; it then passes ("manifest check passed").
 - Check the APK: `<Unity>\Editor\Data\PlaybackEngines\AndroidPlayer\SDK\build-tools\<ver>\aapt.exe dump badging <apk>`. It must list INTERNET and RECORD_AUDIO.
 - The APK is signed with your machine's Android debug key. A headset that has an APK from another machine must uninstall it first (`adb uninstall com.vrforgoodofzion.vrinterviewsim`).
 - After adding or deleting `.cs` files, delete `unity/Library/Bee` and `unity/Library/ScriptAssemblies` if the compile shows bogus CS0103 or CS0246 errors.
