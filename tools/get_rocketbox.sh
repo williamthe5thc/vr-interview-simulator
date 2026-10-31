@@ -17,6 +17,7 @@ filesize() { wc -c < "$1" | tr -d ' '; }
 
 failed=0
 while read -r rel size; do
+  size="${size%$'\r'}"   # the list may have Windows line endings
   case "$rel" in ''|'#'*) continue ;; esac
   out="$dest/$rel"
   if [ -f "$out" ] && [ "$(filesize "$out")" = "$size" ]; then echo "ok    $rel"; continue; fi

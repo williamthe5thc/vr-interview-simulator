@@ -29,3 +29,4 @@
 
 # shell scripts must keep LF line endings
 *.sh text eol=lf
+tools/rocketbox_files.txt text eol=lf
