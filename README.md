@@ -140,4 +140,4 @@ Scripted web demo: https://williamthe5thc.github.io/vr-interview-demo/. Headset 
 
 ## Licence
 
-No licence has been chosen yet. All rights reserved until one is. See [NOTICE.md](NOTICE.md).
+MIT: see [LICENSE](LICENSE). Third-party material (Rocketbox avatars, Asset Store packs, textures) keeps its own licence and is listed in [NOTICE.md](NOTICE.md).
