@@ -12,7 +12,11 @@ The idea is simple: practice speaking an interview answer out loud, in a realist
 
 In progress (2026).
 
-This repository is a code snapshot for people who want to read the project. It does not include the 3D scenes, models or avatars, so the Unity project will not open as a finished scene from this repository alone.
+This repository holds the full Unity project and the server code, and it builds.
+The only thing you add yourself is the Microsoft Rocketbox avatars, which a script downloads (see "Avatars" below).
+
+- **Just want to try it on a Quest?** See [docs/INSTALL_QUEST.md](docs/INSTALL_QUEST.md).
+- **Working on the code (or using Claude Code)?** Start with [CLAUDE.md](CLAUDE.md).
 
 ## What works today
 
@@ -28,6 +32,7 @@ Verified on a Meta Quest 1 headset in October 2026:
 - Interview export to Markdown and JSON.
 - About 2 seconds from the end of the user's answer to the interviewer's first word.
 - The headset connects to the PC server over a private Tailscale network.
+- A sign-in screen on the headset: each player types a personal access code (never built into the app), and can point the app at their own server under "Advanced". The app sends a sign-in (`auth`) message first; see [docs/PROTOCOL.md](docs/PROTOCOL.md).
 
 ## In progress
 
@@ -71,7 +76,9 @@ flowchart LR
     COACH -- "coach_report" --> COACHUI
 ```
 
-Short version of the message contract (details in [docs/architecture.md](docs/architecture.md)):
+Short version of the message contract (every message is in [docs/PROTOCOL.md](docs/PROTOCOL.md); design notes in [docs/architecture.md](docs/architecture.md)):
+
+- The first message is `auth` with the player's access code. The server answers `auth_result` (accepted, with interviews left today, or refused with a reason) before anything else.
 
 - The headset sends the recorded answer as an `audio_data` message with base64 audio.
 - The server replies with `audio_response` messages. Each one is a short WAV chunk. A chunk has a `seq` number, and `more: true` when another chunk of the same reply follows.
@@ -88,45 +95,39 @@ Short version of the message contract (details in [docs/architecture.md](docs/ar
 - Kokoro (text-to-speech), through kokoro-onnx
 - Rhubarb Lip Sync (mouth shapes)
 - Microsoft Rocketbox avatars
-- Tailscale (private network between headset and PC)
+- Tailscale or a Cloudflare tunnel between headset and PC; NativeWebSocket (Apache-2.0) in the client
 
-Unity packages are listed in `client/manifest.json`. The editor version is in `client/ProjectVersion.txt` (2022.3.7f1).
+Unity packages are listed in `unity/Packages/manifest.json`. The editor version is 2022.3.7f1 (`unity/ProjectSettings/ProjectVersion.txt`).
 
 ## Repository layout
 
-- `client/`: Unity C# scripts. `client/Editor/` has the editor scripts that build the scene and the Quest build.
-- `server/`: the Python server, the speech-to-text and text-to-speech workers, and the config.
-- `scripts/`: PowerShell scripts to start and stop the servers and to switch the language model, interviewer mode and voice.
-- `docs/`: architecture notes and media.
+- `unity/`: the Unity project (Assets, Packages, ProjectSettings). `unity/Assets/Editor/` has the scripts that build the scene (`ConferenceInterviewSceneBuilder.cs`) and the APK (`QuestBuild.cs`).
+- `server/`: the Python server, the speech-to-text and text-to-speech workers, access codes, and the example config.
+- `scripts/`: PowerShell scripts to start and stop the servers and to switch the language model, interviewer mode, coach and voice.
+- `tools/`: `get_rocketbox.ps1` / `get_rocketbox.sh` (avatar download) and the Blender scripts that made the room props.
+- `docs/`: [PROTOCOL.md](docs/PROTOCOL.md), [INSTALL_QUEST.md](docs/INSTALL_QUEST.md), architecture notes and media.
 - `third_party/`: licences for third-party material.
 
-## How to run
+## How to build and run
 
-This is an honest outline, not a one-command install. It was built for one Windows PC with an NVIDIA GPU and a Quest headset.
+Full steps are in [CLAUDE.md](CLAUDE.md). In short:
 
-Requirements:
+1. Install Git LFS and Unity 2022.3.7f1 with Android Build Support.
+2. **Before opening Unity**, download the avatars: `tools\get_rocketbox.ps1` (Windows) or `tools/get_rocketbox.sh`.
+3. Build the APK in batch mode with `-executeMethod QuestBuild.BuildConference`, or open `unity/` in the Editor.
+4. Run the server on a Windows PC with your own Anthropic key (user environment variable `VRSIM_ANTHROPIC_API_KEY`) or a free local Ollama model. Then start it with `scripts\start_servers.ps1`.
+5. Install the APK on the headset and type your server's address under "Advanced" on the sign-in screen ([docs/INSTALL_QUEST.md](docs/INSTALL_QUEST.md)).
 
-- Windows PC with an NVIDIA GPU, Python 3, and Ollama with `qwen2.5:7b-instruct` pulled.
-- Tailscale on the PC and on the headset (or the same local network).
-- Unity 2022.3 with Android build support, for the client.
+### Avatars and store assets
 
-Server:
-
-1. Create the virtual environments the start script expects inside `server/`: `.venv` (main server), `.venv_fw` (see `server/requirements-stt-worker.txt`) and `.venv_tts` (see `server/requirements-tts-worker.txt`). The main `server/requirements.txt` is older and may be out of date.
-2. Download Rhubarb Lip Sync 1.14.0 (see `server/tools/README_rhubarb.md`). Without it the server still works, and the headset uses a loudness-based mouth.
-3. Download the Kokoro model and voice files into `server/models/kokoro/`.
-4. To use the hosted model, set the environment variable `VRSIM_ANTHROPIC_API_KEY` to your own Anthropic API key. Never commit it. Without it, replies use the local model.
-5. Start everything with `scripts/start_servers.ps1` and stop it with `scripts/stop_servers.ps1`. The other `scripts/switch_*.ps1` files change the language model, interviewer mode, coach mode and voice engine.
-
-Client:
-
-1. Open the Unity project in Unity 2022.3 and set up the scene. The avatars are not included. Download them separately from [github.com/microsoft/Microsoft-Rocketbox](https://github.com/microsoft/Microsoft-Rocketbox) (MIT licence) and place them under `Assets/Rocketbox`. The licence text is in `third_party/Microsoft-Rocketbox-LICENSE`.
-2. Put your server addresses in the client. The scripts contain the placeholders `YOUR_PC_TAILSCALE_IP` and `YOUR_PC_LAN_IP`. They are set per install. The scene builder in `client/Editor/ConferenceInterviewSceneBuilder.cs` holds the default list.
-3. Build for Android with the Quest build script in `client/Editor/QuestBuild.cs`.
+- The interviewers are Microsoft Rocketbox "Business" characters (MIT). They aren't committed. The download scripts fetch them from a pinned upstream commit into the place where the project expects them.
+- The scene also refers to two Unity Asset Store packs that can't be redistributed: Sunbox Games' *Stylized Customizable Avatar* (an old, hidden placeholder avatar) and nappin's *Office Props Softpack* (one mug).
+  The app builds and runs without them. Import them from your own Asset Store account if you have them.
 
 ## Privacy
 
-Interview audio is not stored. Transcripts and exports stay on the local machine and are excluded from this repository. The API key is read from an environment variable and is never logged or written to disk by the server.
+Interview audio is not stored. Transcripts and exports stay on the server machine and are never committed to this repository.
+On the project owner's test server, transcripts are kept so the project can be improved; players are told this. The API key is read from an environment variable and is never logged or written to disk by the server.
 
 ## Media
 

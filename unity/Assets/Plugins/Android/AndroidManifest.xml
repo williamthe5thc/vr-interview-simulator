@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.vrforzion.vrinterviewsimtest"
+    xmlns:tools="http://schemas.android.com/tools">
+    
+    <uses-feature android:name="android.hardware.vr.headtracking" android:required="true" />
+    
+    <application 
+        android:allowBackup="true"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:icon="@mipmap/app_icon"
+        android:isGame="true">
+        
+        <activity 
+            android:name="com.unity3d.player.UnityPlayerActivity" 
+            android:label="@string/app_name"
+            android:screenOrientation="landscape"
+            android:launchMode="singleTask"
+            android:configChanges="keyboard|keyboardHidden|navigation|orientation|screenLayout|screenSize|uiMode"
+            android:excludeFromRecents="false"
+            android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen">
+            
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="com.oculus.intent.category.VR" />
+            </intent-filter>
+            
+            <meta-data android:name="com.oculus.vr.focusaware" android:value="true" />
+        </activity>
+        
+        <meta-data android:name="com.oculus.supportedDevices" android:value="quest" />
+        <!-- Removed unity.build-id meta-data that was causing issues -->
+    </application>
+    
+<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
+<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="29" />
+<uses-permission android:name="android.permission.RECORD_AUDIO" />
+<uses-permission android:name="android.permission.INTERNET" />
+<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />    
+    <uses-feature android:glEsVersion="0x00030000" />
+</manifest>

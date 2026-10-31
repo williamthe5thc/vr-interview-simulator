@@ -16,8 +16,21 @@
 *.pidb.meta
 .vs/
 .idea/
-Assets/Rocketbox/
-Assets/SunboxGames/
+
+# Third-party avatars are not committed (see README "Avatars and store assets"):
+# Rocketbox payload comes from tools/get_rocketbox.*; its .meta files and our materials ARE committed.
+unity/Assets/Rocketbox/**/*.fbx
+unity/Assets/Rocketbox/**/*.tga
+unity/Assets/Rocketbox/**/*.png
+# Unity Asset Store packs may not be redistributed: import them yourself if you have them.
+unity/Assets/SunboxGames/
+unity/Assets/SunboxGames.meta
+unity/Assets/nappin/
+unity/Assets/nappin.meta
+unity/Assets/MinimalPolyFree/
+unity/Assets/MinimalPolyFree.meta
+*_BackUpThisFolder_ButDontShipItWithYourGame/
+*.symbols.zip
 TestAudio/
 
 # Python
@@ -38,6 +51,11 @@ tts_ab/
 data/
 audio_out/
 key.json
+access_codes.json
+access_state.json
+web_spend*.json
+ffcache*
+config/config.json
 passcode.txt
 *_backend.txt
 *_mode.txt

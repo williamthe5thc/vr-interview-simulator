@@ -63,4 +63,4 @@ The coach is a separate step. When an interview ends, the server saves an export
 - `server/services/llm/`: interviewer logic, Anthropic backend, job scenarios and question bank.
 - `server/services/audio/`: speech-to-text and text-to-speech clients.
 - `server/tools/stt_worker.py`, `server/tools/tts_worker.py`: the two GPU workers.
-- `client/WebSocketManager.cs`, `client/InterviewFlow.cs`: client connection and interview flow.
+- `unity/Assets/WebSocketManager.cs`, `unity/Assets/InterviewFlow.cs`: client connection and interview flow.
